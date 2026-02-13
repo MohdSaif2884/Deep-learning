@@ -11,40 +11,75 @@ from tensorflow.keras.layers import Dense
 x_train = x_train.reshape(60000, 784) / 255.0
 x_test  = x_test.reshape(10000, 784) / 255.0
 
-# Model
-model = Sequential()
-model.add(Dense(128, activation='relu', input_shape=(784,)))
-model.add(Dense(10, activation='softmax'))
+# -----------------------------
+# 🔵 ReLU Model
+# -----------------------------
+model_relu = Sequential()
+model_relu.add(Dense(128, activation='relu', input_shape=(784,)))
+model_relu.add(Dense(10, activation='softmax'))
 
-# Compile
-model.compile(
+model_relu.compile(
     optimizer='adam',
     loss='sparse_categorical_crossentropy',
     metrics=['accuracy']
 )
 
-# Train
-history = model.fit(
+history_relu = model_relu.fit(
     x_train, y_train,
-    epochs=5,      # kam kiya for safety
+    epochs=5,
     batch_size=32,
     validation_split=0.1
 )
 
-# Evaluate
-test_loss, test_acc = model.evaluate(x_test, y_test)
-print("Test Accuracy:", test_acc)
+relu_loss, relu_acc = model_relu.evaluate(x_test, y_test)
+print("ReLU Test Accuracy:", relu_acc)
 
-# Plot Accuracy
-plt.plot(history.history['accuracy'])
-plt.plot(history.history['val_accuracy'])
-plt.legend(['Train', 'Validation'])
-plt.title("Accuracy Graph")
+
+# -----------------------------
+# 🟠 Sigmoid Model
+# -----------------------------
+model_sigmoid = Sequential()
+model_sigmoid.add(Dense(128, activation='sigmoid', input_shape=(784,)))
+model_sigmoid.add(Dense(10, activation='softmax'))
+
+model_sigmoid.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+history_sigmoid = model_sigmoid.fit(
+    x_train, y_train,
+    epochs=5,
+    batch_size=32,
+    validation_split=0.1
+)
+
+sigmoid_loss, sigmoid_acc = model_sigmoid.evaluate(x_test, y_test)
+print("Sigmoid Test Accuracy:", sigmoid_acc)
+
+
+# -----------------------------
+# 📊 Accuracy Comparison Graph
+# -----------------------------
+plt.figure()
+plt.plot(history_relu.history['val_accuracy'])
+plt.plot(history_sigmoid.history['val_accuracy'])
+plt.legend(['ReLU', 'Sigmoid'])
+plt.title("Validation Accuracy: ReLU vs Sigmoid")
+plt.xlabel("Epochs")
+plt.ylabel("Accuracy")
 plt.show()
 
-# Plot Loss
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.legend(['Train', 'Validation'])
-plt.title("Loss Graph")
+
+# -----------------------------
+# 📊 Loss Comparison Graph
+# -----------------------------
+plt.figure()
+plt.plot(history_relu.history['val_loss'])
+plt.plot(history_sigmoid.history['val_loss'])
+plt.legend(['ReLU', 'Sigmoid'])
+plt.title("Validation Loss: ReLU vs Sigmoid")
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
 plt.show()
